@@ -3,408 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sport News Auto Generator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Prompt', 'sans-serif'] },
-                    colors: {
-                        dark: {
-                            900: '#131722', 
-                            800: '#1e222d', 
-                            700: '#2a2e39', 
-                            600: '#434651'
-                        },
-                        brand: {
-                            blue: '#3b82f6',
-                            cyan: '#06b6d4'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>ระบบส่งภาพข่าวอัตโนมัติ 🚀</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #131722; }
-        ::-webkit-scrollbar-thumb { background: #434651; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
-        
-        input[type=range] {
-            -webkit-appearance: none;
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: #ffffff;
             width: 100%;
-            background: transparent;
+            max-width: 500px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px; width: 16px;
-            border-radius: 50%;
-            background: #3b82f6;
+        h2 {
+            text-align: center;
+            color: #1a1a1a;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #4a4a4a;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+            font-size: 15px;
+        }
+        input[type="file"] {
+            padding: 9px;
+            background-color: #f9f9f9;
+        }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row > div {
+            flex: 1;
+        }
+        button {
+            width: 100%;
+            background-color: #0066ff;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 25px;
             cursor: pointer;
-            margin-top: -6px;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+            transition: background-color 0.3s;
+            font-family: 'Kanit', sans-serif;
         }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px;
-            cursor: pointer;
-            background: #434651;
-            border-radius: 2px;
+        button:hover {
+            background-color: #0052cc;
         }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        button:disabled {
+            background-color: #a0c4ff;
+            cursor: not-allowed;
+        }
+        .status-msg {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
     </style>
 </head>
-<body class="bg-dark-900 text-gray-300 font-sans min-h-screen flex justify-center p-4 md:p-6 selection:bg-brand-blue selection:text-white">
+<body>
 
-    <div class="max-w-6xl w-full flex flex-col lg:flex-row gap-6">
+    <div class="container">
+        <h2>ส่งข้อมูลทำภาพข่าว 📸</h2>
         
-        <div class="flex-1 flex flex-col h-full">
-            
-            <div class="bg-dark-800 rounded-t-xl border border-dark-700 p-2 border-b-0 flex overflow-x-auto hide-scrollbar">
-                <div id="tabsContainer" class="flex w-full min-w-max"></div>
-            </div>
+        <form id="newsForm">
+            <label>1. เลือกรูปภาพจากมือถือ</label>
+            <input type="file" id="imageFile" accept="image/*" required>
 
-            <form id="mainForm" class="bg-dark-800 border border-dark-700 rounded-b-xl p-6 shadow-2xl relative">
-                
-                <div id="tabContentsContainer"></div>
-
-                <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-                    <button type="button" onclick="resetForm()" class="bg-dark-700 hover:bg-dark-600 border border-dark-600 text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 text-lg flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-rotate-right"></i> ล้างข้อมูล
-                    </button>
-                    <button type="submit" id="submitBtn" class="bg-gradient-to-r from-brand-blue to-brand-cyan hover:from-blue-600 hover:to-cyan-500 text-white font-bold py-3 px-12 rounded-lg shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-300 transform hover:scale-105 text-lg flex justify-center items-center gap-2 w-full sm:w-auto">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> สร้างภาพข่าวทั้งหมด
-                    </button>
+            <div class="row">
+                <div>
+                    <label>2. รูปแบบภาพ</label>
+                    <select id="imgType">
+                        <option value="0">แนวนอน (Landscape)</option>
+                        <option value="1">แนวตั้ง (Portrait)</option>
+                    </select>
                 </div>
-                <p id="statusMsg" class="text-center mt-4 text-sm font-semibold hidden"></p>
-            </form>
-        </div>
-
-        <div class="w-80 hidden lg:flex flex-col gap-6">
-            <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 shadow-lg">
-                <h3 class="text-white font-semibold mb-4 text-sm"><i class="fa-solid fa-list-ul mr-2"></i> Current Article List</h3>
-                <div class="space-y-3" id="articleListSummary"></div>
-            </div>
-
-            <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 shadow-lg flex-1">
-                <h3 class="text-white font-semibold mb-4 text-sm flex justify-between items-center">
-                    <span><i class="fa-solid fa-clock-rotate-left mr-2"></i> Action Logs</span>
-                    <i class="fa-solid fa-arrow-right text-dark-600"></i>
-                </h3>
-                <div class="text-xs text-gray-500 bg-dark-900 rounded p-3 font-mono border border-dark-700">
-                    <p class="mb-1 text-green-400">> System Ready.</p>
-                    <p>> รอรับข้อมูลภาพข่าว...</p>
+                <div>
+                    <label>3. การจัดตำแหน่ง (แนวตั้ง)</label>
+                    <select id="alignMode">
+                        <option value="0">ชิดบน (Top)</option>
+                        <option value="1">ตรงกลาง (Center)</option>
+                    </select>
                 </div>
             </div>
-        </div>
 
+            <div class="row">
+                <div>
+                    <label>4. ซูมภาพ (%)</label>
+                    <input type="number" id="zoomText" value="100" required>
+                </div>
+                <div>
+                    <label>5. เลื่อนแกน Y (บวก/ลบ %)</label>
+                    <input type="number" id="yOffText" value="0" required>
+                </div>
+            </div>
+
+            <label>6. ข้อความบรรทัดที่ 1</label>
+            <input type="text" id="n1" placeholder="พิมพ์พาดหัวข่าวที่นี่..." required>
+
+            <label>7. ข้อความบรรทัดที่ 2 (เว้นว่างได้)</label>
+            <input type="text" id="n2" placeholder="พิมพ์ข้อความรอง (ถ้ามี)...">
+
+            <label>8. เลือกหมวดหมู่ / ลีก</label>
+            <select id="lg">
+                <option value="พรีเมียร์ลีก">พรีเมียร์ลีก</option>
+                <option value="เซเรีย อา">เซเรีย อา</option>
+                <option value="บุนเดสลีกา">บุนเดสลีกา</option>
+                <option value="ลาลีกา">ลาลีกา</option>
+                <option value="ปรีไมราลีกา">ปรีไมราลีกา</option>
+                <option value="ลีกเอิง">ลีกเอิง</option>
+                <option value="เอฟเอ คัพ">เอฟเอ คัพ</option>
+                <option value="เฟร้นช์ คัพ">เฟร้นช์ คัพ</option>
+                <option value="ทีมชาติ">ทีมชาติ</option>
+                <option value="แชมเปี้ยนชิพ">แชมเปี้ยนชิพ</option>
+                <option value="คาราบาวคัพ">คาราบาวคัพ</option>
+                <option value="โกปา เดล เรย์">โกปา เดล เรย์</option>
+                <option value="ฟุตบอลโลก">ฟุตบอลโลก</option>
+                <option value="โคปปา อิตาเลีย">โคปปา อิตาเลีย</option>
+                <option value="เดเอฟเบ โพคาล">เดเอฟเบ โพคาล</option>
+                <option value="เอเรดิวิซี">เอเรดิวิซี</option>
+                <option value="ยูฟ่า แชมเปี้ยนส์ ลีก">ยูฟ่า แชมเปี้ยนส์ ลีก</option>
+                <option value="สกอตติช พรีเมียร์ชิพ">สกอตติช พรีเมียร์ชิพ</option>
+                <option value="ซาอุดี โปรลีก">ซาอุดี โปรลีก</option>
+                <option value="ซูเปอร์ลีก ตุรกี">ซูเปอร์ลีก ตุรกี</option>
+                <option value="ยูโรเปียน ซูเปอร์ ลีก">ยูโรเปียน ซูเปอร์ ลีก</option>
+                <option value="ยูฟ่าเนชั่นส์ลีก">ยูฟ่าเนชั่นส์ลีก</option>
+                <option value="ยูโรปาลีก">ยูโรปาลีก</option>
+                <option value="ยูฟ่า คอนเฟอเรนซ์ ลีก">ยูฟ่า คอนเฟอเรนซ์ ลีก</option>
+                <option value="บราซิล ซีรี่เอ">บราซิล ซีรี่เอ</option>
+                <option value="เมเจอร์ลีก ซอคเกอร์">เมเจอร์ลีก ซอคเกอร์</option>
+                <option value="ลีกอื่น ๆ">ลีกอื่น ๆ</option>
+                <option value="ข่าวอื่น ๆ">ข่าวอื่น ๆ</option>
+            </select>
+
+            <button type="submit" id="submitBtn">ส่งข้อมูลเข้า n8n 🚀</button>
+        </form>
+
+        <div id="statusMessage" class="status-msg"></div>
     </div>
 
     <script>
-        const totalTabs = 5;
-        let activeTab = 1;
+        // ใส่ URL ที่ได้มาจากหน้าจอ Production ของ n8n
+        const webhookUrl = 'https://n8n.home26.online/webhook/news-form';
 
-        function generateTabContent(index) {
-            return `
-                <div id="content-tab-${index}" class="tab-content ${index === 1 ? 'active' : ''}">
-                    
-                    <div class="mb-6">
-                        <h3 class="text-white text-sm font-medium mb-3">Image Settings</h3>
-                        <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 flex flex-col md:flex-row gap-6">
-                            
-                            <div class="flex-1 border-2 border-dashed border-dark-600 rounded-lg bg-dark-800 flex flex-col items-center justify-center p-6 hover:border-brand-blue transition-colors relative group">
-                                <input type="file" id="img_${index}" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                <i class="fa-regular fa-image text-4xl text-dark-600 mb-3 group-hover:text-brand-blue transition-colors"></i>
-                                <div class="bg-brand-blue text-white text-xs px-4 py-2 rounded-md font-medium shadow-md">เลือกรูปภาพ...</div>
-                                <p id="fileName_${index}" class="mt-2 text-xs text-gray-400 text-center truncate w-full px-2"></p>
-                            </div>
-
-                            <div class="flex-1 flex flex-col justify-center gap-6">
-                                <div>
-                                    <div class="flex justify-between items-center mb-2">
-                                        <label class="text-sm font-medium">Zoom</label>
-                                        <div class="flex items-center bg-dark-800 border border-dark-700 rounded px-2 py-1">
-                                            <input type="number" id="zoomInput_${index}" value="100" class="bg-transparent w-12 text-right text-white text-sm outline-none">
-                                            <span class="text-dark-600 ml-1">%</span>
-                                        </div>
-                                    </div>
-                                    <input type="range" id="zoomSlider_${index}" min="50" max="200" value="100">
-                                    <div class="flex justify-between text-[10px] text-dark-600 mt-1">
-                                        <span>50%</span><span>100%</span><span>200%</span>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div class="flex justify-between items-center mb-2">
-                                        <label class="text-sm font-medium">Axis Y</label>
-                                        <div class="flex items-center bg-dark-800 border border-dark-700 rounded px-2 py-1">
-                                            <input type="number" id="yInput_${index}" value="0" class="bg-transparent w-12 text-right text-white text-sm outline-none">
-                                            <span class="text-dark-600 ml-1">%</span>
-                                        </div>
-                                    </div>
-                                    <input type="range" id="ySlider_${index}" min="-100" max="100" value="0">
-                                    <div class="flex justify-between text-[10px] text-dark-600 mt-1">
-                                        <span>-100%</span><span class="text-brand-blue">(ใส่ลบ = ดึงขึ้น)</span><span>+100%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <h3 class="text-white text-sm font-medium mb-3">Image Options</h3>
-                        <div class="flex gap-4">
-                            <div class="flex-1 bg-dark-900 border border-dark-700 rounded-lg p-3 flex items-center">
-                                <i class="fa-solid fa-image text-dark-600 mr-3"></i>
-                                <label class="text-sm mr-2 whitespace-nowrap">Mode</label>
-                                <select id="type_${index}" class="bg-transparent text-white w-full outline-none text-sm appearance-none cursor-pointer">
-                                    <option value="0" class="bg-dark-800">แนวนอน (Landscape)</option>
-                                    <option value="1" class="bg-dark-800">แนวตั้ง (Portrait)</option>
-                                </select>
-                                <i class="fa-solid fa-chevron-down text-dark-600 text-xs ml-2"></i>
-                            </div>
-                            <div class="flex-1 bg-dark-900 border border-dark-700 rounded-lg p-3 flex items-center">
-                                <i class="fa-solid fa-up-down text-dark-600 mr-3"></i>
-                                <label class="text-sm mr-2 whitespace-nowrap">Align</label>
-                                <select id="align_${index}" class="bg-transparent text-white w-full outline-none text-sm appearance-none cursor-pointer">
-                                    <option value="0" class="bg-dark-800">ชิดบน (Top)</option>
-                                    <option value="1" class="bg-dark-800">กึ่งกลาง (Center)</option>
-                                </select>
-                                <i class="fa-solid fa-chevron-down text-dark-600 text-xs ml-2"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <h3 class="text-white text-sm font-medium mb-3">Article Text</h3>
-                        <div class="bg-dark-900 border border-dark-700 rounded-xl p-4 space-y-4">
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">หัวข้อข่าว บรรทัด 1: <span class="text-red-500">*</span></label>
-                                <input type="text" id="text1_${index}" oninput="updateSummary(${index})" placeholder="พิมพ์พาดหัวข่าวหลัก..." class="w-full bg-dark-800 border border-dark-600 rounded-lg py-2.5 px-4 text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none transition-colors">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">หัวข้อข่าว บรรทัด 2 (ถ้ามี):</label>
-                                <input type="text" id="text2_${index}" placeholder="พิมพ์พาดหัวข่าวรอง..." class="w-full bg-dark-800 border border-dark-600 rounded-lg py-2.5 px-4 text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none transition-colors">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex gap-4">
-                            <div class="flex-[2] bg-dark-900 border border-dark-700 rounded-lg p-3 flex items-center">
-                                <label class="text-sm mr-3 whitespace-nowrap">League</label>
-                                <i class="fa-solid fa-basketball text-orange-500 mr-2"></i>
-                                <input type="text" id="logo_${index}" value="PremierLeague" class="bg-transparent text-white w-full outline-none text-sm" placeholder="ชื่อโฟลเดอร์โลโก้">
-                            </div>
-                            <div class="flex-[3] bg-dark-900 border border-dark-700 rounded-lg p-3 flex items-center">
-                                <i class="fa-solid fa-tags text-dark-600 mr-3"></i>
-                                <input type="text" id="tags_${index}" class="bg-transparent text-gray-400 w-full outline-none text-sm" placeholder="Tags เพิ่มเติม (Optional)">
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            `;
-        }
-
-        function init() {
-            const tabsContainer = document.getElementById('tabsContainer');
-            const contentsContainer = document.getElementById('tabContentsContainer');
-            const summaryContainer = document.getElementById('articleListSummary');
-
-            let tabsHTML = ''; let contentsHTML = ''; let summaryHTML = '';
-
-            for (let i = 1; i <= totalTabs; i++) {
-                tabsHTML += `
-                    <button type="button" onclick="switchTab(${i})" id="btn-tab-${i}" class="flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap
-                    ${i === 1 ? 'border-brand-blue text-white bg-dark-900/50 rounded-t-lg' : 'border-transparent text-gray-500 hover:text-gray-300 hover:bg-dark-700/30'}">
-                        <i class="fa-regular fa-newspaper"></i> ข่าวที่ ${i}
-                    </button>
-                `;
-                contentsHTML += generateTabContent(i);
-                summaryHTML += `
-                    <div id="summary-${i}" class="bg-dark-900 border border-dark-700 rounded-lg p-3 flex items-center gap-3 ${i === 1 ? 'border-l-4 border-l-brand-blue' : 'opacity-60'} transition-all">
-                        <div class="bg-dark-700 text-xs w-6 h-6 flex items-center justify-center rounded-full text-gray-300">${i}</div>
-                        <p id="summary-text-${i}" class="text-xs text-gray-400 truncate w-full italic">รอการกรอกข้อมูล...</p>
-                    </div>
-                `;
-            }
-
-            tabsContainer.innerHTML = tabsHTML;
-            contentsContainer.innerHTML = contentsHTML;
-            summaryContainer.innerHTML = summaryHTML;
-
-            for (let i = 1; i <= totalTabs; i++) {
-                const zSlide = document.getElementById(`zoomSlider_${i}`);
-                const zInp = document.getElementById(`zoomInput_${i}`);
-                const ySlide = document.getElementById(`ySlider_${i}`);
-                const yInp = document.getElementById(`yInput_${i}`);
-                const fileInp = document.getElementById(`img_${i}`);
-                const fileName = document.getElementById(`fileName_${i}`);
-
-                zSlide.oninput = () => zInp.value = zSlide.value;
-                zInp.oninput = () => zSlide.value = zInp.value;
-                ySlide.oninput = () => yInp.value = ySlide.value;
-                yInp.oninput = () => ySlide.value = yInp.value;
-
-                fileInp.onchange = function(e) {
-                    if(this.files && this.files.length > 0) {
-                        fileName.textContent = this.files[0].name;
-                        fileName.classList.replace('text-gray-400', 'text-brand-blue');
-                    }
-                };
-            }
-        }
-
-        function switchTab(index) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('[id^="btn-tab-"]').forEach(el => {
-                el.className = 'flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-all duration-200 border-transparent text-gray-500 hover:text-gray-300 hover:bg-dark-700/30 flex items-center justify-center gap-2 whitespace-nowrap';
-            });
-            document.querySelectorAll('[id^="summary-"]').forEach(el => {
-                el.classList.add('opacity-60');
-                el.classList.remove('border-l-4', 'border-l-brand-blue');
-            });
-
-            document.getElementById(`content-tab-${index}`).classList.add('active');
-            const activeBtn = document.getElementById(`btn-tab-${index}`);
-            activeBtn.className = 'flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-all duration-200 border-brand-blue text-white bg-dark-900/50 rounded-t-lg flex items-center justify-center gap-2 whitespace-nowrap';
+        document.getElementById('newsForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // ป้องกันเว็บรีเฟรชตอนกดส่ง
             
-            const activeSummary = document.getElementById(`summary-${index}`);
-            activeSummary.classList.remove('opacity-60');
-            activeSummary.classList.add('border-l-4', 'border-l-brand-blue');
-            activeTab = index;
-        }
-
-        function updateSummary(index) {
-            const val = document.getElementById(`text1_${index}`).value;
-            const summaryEl = document.getElementById(`summary-text-${index}`);
-            if(val.trim() === '') {
-                summaryEl.textContent = 'รอการกรอกข้อมูล...';
-                summaryEl.classList.add('italic', 'text-gray-400');
-                summaryEl.classList.remove('text-white', 'not-italic');
-            } else {
-                summaryEl.textContent = val;
-                summaryEl.classList.remove('italic', 'text-gray-400');
-                summaryEl.classList.add('text-white', 'not-italic');
-            }
-        }
-
-        // ฟังก์ชันล้างข้อมูล (Reset Form)
-        function resetForm() {
-            if(!confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมด?")) return;
-
-            for (let i = 1; i <= totalTabs; i++) {
-                // ล้างรูปภาพ
-                document.getElementById(`img_${i}`).value = "";
-                const fileNameEl = document.getElementById(`fileName_${i}`);
-                fileNameEl.textContent = "";
-                fileNameEl.classList.replace('text-brand-blue', 'text-gray-400');
-
-                // รีเซ็ตซูมและแกน Y
-                document.getElementById(`zoomInput_${i}`).value = "100";
-                document.getElementById(`zoomSlider_${i}`).value = "100";
-                document.getElementById(`yInput_${i}`).value = "0";
-                document.getElementById(`ySlider_${i}`).value = "0";
-
-                // รีเซ็ตโหมด
-                document.getElementById(`type_${i}`).value = "0";
-                document.getElementById(`align_${i}`).value = "0";
-
-                // ล้างข้อความ
-                document.getElementById(`text1_${i}`).value = "";
-                document.getElementById(`text2_${i}`).value = "";
-                document.getElementById(`logo_${i}`).value = "PremierLeague";
-                document.getElementById(`tags_${i}`).value = "";
-
-                // อัปเดต Sidebar ให้กลับไปเป็นค่าว่าง
-                updateSummary(i);
-            }
-
-            // ซ่อนข้อความสถานะ และกลับไปที่แท็บแรก
-            document.getElementById('statusMsg').classList.add('hidden');
-            switchTab(1);
-        }
-
-        document.getElementById('mainForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('statusMessage');
             
-            // ⚠️ ใส่ URL ของ n8n Webhook ของคุณตรงนี้
-            const WEBHOOK_URL = 'https://YOUR_N8N_URL_HERE/webhook/...'; 
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const statusMsg = document.getElementById('statusMsg');
-            
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังอัปโหลด...';
-            statusMsg.classList.add('hidden');
+            // เปลี่ยนสถานะปุ่มตอนกำลังส่ง
+            btn.disabled = true;
+            btn.innerText = 'กำลังส่งข้อมูล... ⏳';
+            status.innerText = '';
+            status.className = 'status-msg';
 
+            // ดึงข้อมูลทั้งหมดจากฟอร์มแพ็คใส่กล่อง FormData
             const formData = new FormData();
-            const newsDataArray = [];
-            let hasData = false;
-            
-            for (let i = 1; i <= totalTabs; i++) {
-                const fileInput = document.getElementById(`img_${i}`);
-                const text1 = document.getElementById(`text1_${i}`).value;
-
-                if (fileInput.files.length > 0 && text1.trim() !== '') {
-                    hasData = true;
-                    formData.append(`image_${i}`, fileInput.files[0]);
-                    
-                    newsDataArray.push({
-                        tabIndex: i,
-                        imageKey: `image_${i}`,
-                        zoom: document.getElementById(`zoomInput_${i}`).value,
-                        yAxis: document.getElementById(`yInput_${i}`).value,
-                        imgType: document.getElementById(`type_${i}`).value,
-                        alignMode: document.getElementById(`align_${i}`).value,
-                        text1: text1,
-                        text2: document.getElementById(`text2_${i}`).value,
-                        logo: document.getElementById(`logo_${i}`).value
-                    });
-                }
-            }
-
-            if (!hasData) {
-                alert("กรุณาใส่รูปภาพและหัวข้อข่าวอย่างน้อย 1 ข่าวครับ");
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> สร้างภาพข่าวทั้งหมด';
-                return;
-            }
-
-            formData.append('newsData', JSON.stringify(newsDataArray));
+            formData.append('image', document.getElementById('imageFile').files[0]);
+            formData.append('imgType', document.getElementById('imgType').value);
+            formData.append('alignMode', document.getElementById('alignMode').value);
+            formData.append('zoomText', document.getElementById('zoomText').value);
+            formData.append('yOffText', document.getElementById('yOffText').value);
+            formData.append('n1', document.getElementById('n1').value);
+            formData.append('n2', document.getElementById('n2').value);
+            formData.append('lg', document.getElementById('lg').value);
 
             try {
-                await new Promise(r => setTimeout(r, 1500)); 
-
-                /* โค้ดสำหรับยิงของจริง (เอาคอมเมนต์ออกเมื่อพร้อม)
-                const response = await fetch(WEBHOOK_URL, {
+                // ยิงข้อมูลไปที่ n8n
+                const response = await fetch(webhookUrl, {
                     method: 'POST',
                     body: formData
                 });
-                if (!response.ok) throw new Error('Network response was not ok');
-                */
 
-                statusMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> ส่งข้อมูลสำเร็จแล้ว! เช็คโฟลเดอร์ปลายทางได้เลย';
-                statusMsg.className = 'text-center mt-4 text-sm font-bold text-green-400 block';
-                
+                if (response.ok) {
+                    status.innerText = '✅ ส่งข้อมูลสำเร็จ! n8n กำลังทำงานครับ';
+                    status.classList.add('success');
+                    document.getElementById('newsForm').reset(); // ล้างค่าในฟอร์ม
+                    document.getElementById('zoomText').value = "100"; // คืนค่าซูมกลับเป็น 100
+                    document.getElementById('yOffText').value = "0"; // คืนค่า Y กลับเป็น 0
+                } else {
+                    status.innerText = '❌ ส่งไม่สำเร็จ: เช็ค n8n ว่าเปิด Active หรือยังครับ';
+                    status.classList.add('error');
+                }
             } catch (error) {
-                statusMsg.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> เกิดข้อผิดพลาด ไม่สามารถส่งข้อมูลได้ (เช็ค URL Webhook)';
-                statusMsg.className = 'text-center mt-4 text-sm font-bold text-red-500 block';
+                status.innerText = '❌ เชื่อมต่อไม่ได้: คอมที่บ้านอาจจะดับ หรือลืมรัน Cloudflared ครับ';
+                status.classList.add('error');
+                console.error('Error:', error);
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> สร้างภาพข่าวทั้งหมด';
+                // คืนสภาพปุ่มกลับมาให้กดใหม่ได้
+                btn.disabled = false;
+                btn.innerText = 'ส่งข้อมูลเข้า n8n 🚀';
             }
         });
-
-        init();
     </script>
+
 </body>
 </html>
