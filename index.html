@@ -3,148 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบส่งภาพข่าวอัตโนมัติ 🚀</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>News Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Kanit', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { background-color: #ffffff; width: 100%; max-width: 500px; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #1a1a1a; margin-top: 0; margin-bottom: 20px; }
-        label { display: block; margin-top: 15px; font-weight: 600; color: #4a4a4a; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; margin-top: 6px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: 'Kanit', sans-serif; font-size: 15px; }
-        input[type="file"] { padding: 9px; background-color: #f9f9f9; }
-        .row { display: flex; gap: 15px; } .row > div { flex: 1; }
-        button { width: 100%; background-color: #0066ff; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; margin-top: 25px; cursor: pointer; transition: background-color 0.3s; font-family: 'Kanit', sans-serif; }
-        button:hover { background-color: #0052cc; }
-        button:disabled { background-color: #a0c4ff; cursor: not-allowed; }
-        .status-msg { margin-top: 15px; text-align: center; font-weight: 600; font-size: 15px; }
-        .success { color: #28a745; } .error { color: #dc3545; }
+        body { font-family: 'Kanit', sans-serif; background-color: #f8fafc; }
+        
+        /* สไตล์ช่องกรอกข้อมูล */
+        .input-field {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .input-field:focus {
+            border-color: #3b82f6;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        .label-text {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ซ่อน input file ของจริง */
+        input[type="file"] { display: none; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-6">
 
-    <div class="container">
-        <h2>ส่งข้อมูลทำภาพข่าว 📸</h2>
+    <div class="bg-white rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden border border-slate-100">
         
-        <form id="newsForm">
-            <label>1. เลือกรูปภาพจากมือถือ (เพิ่มภาพข่าว)</label>
-            <input type="file" id="imageFile" accept="image/*" required>
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 md:p-8 text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-white mb-2">ระบบสร้างข่าว</h1>
+            <p class="text-blue-100 text-sm md:text-base">ระบบสร้างภาพข่าวอัตโนมัติ</p>
+        </div>
 
-            <div class="row">
+        <div class="p-6 md:p-8 space-y-6">
+            
+            <div>
+                <span class="label-text text-lg">📸 1. เลือกรูปภาพข่าว (Image)</span>
+                <label for="imageFile" class="flex flex-col items-center justify-center w-full h-36 border-2 border-slate-300 border-dashed rounded-2xl cursor-pointer bg-slate-50 hover:bg-blue-50 hover:border-blue-400 transition-all">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <svg class="w-8 h-8 mb-3 text-slate-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                        </svg>
+                        <p id="file-name" class="mb-1 text-sm text-slate-600 font-medium">คลิกเพื่อเลือกรูปภาพจากเครื่อง</p>
+                        <p class="text-xs text-blue-500 font-medium mt-1">💡 ขนาดภาพแนะนำ 1280x720</p>
+                        <p class="text-[11px] text-slate-400 mt-1">(รองรับไฟล์ JPG, PNG)</p>
+                    </div>
+                    <input id="imageFile" type="file" accept="image/*" onchange="updateFileName(this)" />
+                </label>
+            </div>
+
+            <hr class="border-slate-100">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
-                    <label>2. รูปแบบภาพ</label>
-                    <select id="imgType">
-                        <option value="แนวนอน">แนวนอน (Landscape)</option>
-                        <option value="แนวตั้ง">แนวตั้ง (Portrait)</option>
+                    <label class="label-text">2. รูปแบบภาพ (Mode)</label>
+                    <select id="imgType" class="input-field">
+                        <option value="Landscape">แนวนอน (Landscape)</option>
+                        <option value="Result">ผลบอล (Result)</option>
                     </select>
                 </div>
                 <div>
-                    <label>3. ตำแหน่งภาพ</label>
-                    <select id="alignMode">
-                        <option value="ชิดบน">ชิดบน (Top)</option>
-                        <option value="ตรงกลาง">ตรงกลาง (Center)</option>
+                    <label class="label-text">3. ตำแหน่งภาพ (Alignment)</label>
+                    <select id="alignMode" class="input-field">
+                        <option value="Top">ชิดบน (Top)</option>
+                        <option value="Bottom">ชิดล่าง (Bottom)</option>
                     </select>
                 </div>
             </div>
 
-            <div class="row">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
-                    <label>4. ค่าการซูม (Zoom %)</label>
-                    <input type="number" id="zoomText" value="100" required>
+                    <label class="label-text">4. ค่าการซูม (Zoom %)</label>
+                    <input type="number" id="zoomText" class="input-field" value="100">
                 </div>
                 <div>
-                    <label>5. ขยับแกน Y (Y_Offset)</label>
-                    <input type="number" id="yOffText" value="0" required>
+                    <label class="label-text flex items-baseline gap-1">
+                        5. ขยับแกน Y 
+                        <span class="text-xs text-blue-500 font-normal ml-1">(ใส่เครื่องหมาย - เพื่อขยับภาพขึ้น)</span>
+                    </label>
+                    <input type="number" id="yOffText" class="input-field" value="0">
                 </div>
             </div>
 
-            <label>6. หัวข้อข่าวบรรทัดที่ 1</label>
-            <input type="text" id="n1" placeholder="พิมพ์พาดหัวข่าวที่นี่..." required>
+            <div>
+                <label class="label-text flex justify-between items-end">
+                    <span>6. พาดหัวข่าว บรรทัดที่ 1 <span class="text-red-500">*</span></span>
+                </label>
+                <p class="text-xs text-blue-500 mb-2 mt-[-4px]">💡 หัวข้อข่าวหากยาวแนะนำตัดแยกเป็น 2 บรรทัด</p>
+                <input type="text" id="n1" class="input-field text-lg font-semibold" placeholder="เช่น แมนยูบุกชนะ..." required>
+            </div>
 
-            <label>7. หัวข้อข่าวบรรทัดที่ 2 (เว้นว่างได้)</label>
-            <input type="text" id="n2" placeholder="พิมพ์ข้อความรอง (ถ้ามี)...">
+            <div>
+                <label class="label-text">7. รายละเอียดข่าว บรรทัดที่ 2</label>
+                <input type="text" id="n2" class="input-field" placeholder="เว้นว่างได้...">
+            </div>
 
-            <label>8. เลือกลีก (League)</label>
-            <select id="lg">
-                <option value="พรีเมียร์ลีก">#พรีเมียร์ลีก</option>
-                <option value="เซเรีย อา">#เซเรีย อา</option>
-                <option value="บุนเดสลีกา">#บุนเดสลีกา</option>
-                <option value="ลาลีกา">#ลาลีกา</option>
-                <option value="ปรีไมราลีกา">#ปรีไมราลีกา</option>
-                <option value="ลีกเอิงก">#ลีกเอิง</option>
-                <option value="เอฟเอ คัพ">#เอฟเอ คัพ</option>
-                <option value="เฟร้นช์ คัพ">#เฟร้นช์ คัพ</option>
-                <option value="ทีมชาติ">#ทีมชาติก</option>
-                <option value="แชมเปี้ยนชิพ">#แชมเปี้ยนชิพ</option>
-                <option value="คาราบาวคัพ">#คาราบาวคัพ</option>
-                <option value="โกปา เดล เรย์">#โกปา เดล เรย์</option>
-                <option value="เดเอฟเบ โพคาล">#เดเอฟเบ โพคาล</option>
-                <option value="ฟุตบอลโลก">#ฟุตบอลโลก</option>
-                <option value="เอเรดิวิซี">#เอเรดิวิซี</option>
-                <option value="ยูฟ่า แชมเปี้ยนส์ ลีก">#ยูฟ่า แชมเปี้ยนส์ ลีก</option>
-                <option value="สกอตติช พรีเมียร์ชิพ">#สกอตติช พรีเมียร์ชิพ</option>
-                <option value="ซาอุดี โปรลีก">#ซาอุดี โปรลีก</option>
-                <option value="ซูเปอร์ลีก ตุรกี">#ซูเปอร์ลีก ตุรกี</option>
-                <option value="ยูโรเปียน ซูเปอร์ ลีก">#ยูโรเปียน ซูเปอร์ ลีก</option>
-                <option value="ยูโรปาลีก">#ยูโรปาลีก</option>
-                <option value="ยูฟ่า คอนเฟอเรนซ์ ลีก">#ยูฟ่า คอนเฟอเรนซ์ ลีก</option>
-                <option value="บราซิล ซีรี่เอ">#บราซิล ซีรี่เอ</option>
-                <option value="เมเจอร์ลีก ซอคเกอร์">#เมเจอร์ลีก ซอคเกอร์</option>
-                <option value="ลีกอื่น ๆ">#ลีกอื่น ๆ</option>
-                <option value="ข่าวอื่น ๆ">#ข่าวอื่น ๆ</option>
-            </select>
+            <div>
+                <label class="label-text">8. เลือกลีก (League)</label>
+                <select id="lg" class="input-field">
+                    <option value="#พรีเมียร์ลีก">#พรีเมียร์ลีก</option>
+                    <option value="#เซเรีย อา">#เซเรีย อา</option>
+                    <option value="#บุนเดสลีกา">#บุนเดสลีกา</option>
+                    <option value="#ลาลีกา">#ลาลีกา</option>
+                    <option value="#ปรีไมราลีกา">#ปรีไมราลีกา</option>
+                    <option value="#ลีกเอิง">#ลีกเอิง</option>
+                    <option value="#เอฟเอ คัพ">#เอฟเอ คัพ</option>
+                    <option value="#เฟร้นช์ คัพ">#เฟร้นช์ คัพ</option>
+                    <option value="#ทีมชาติ">#ทีมชาติ</option>
+                    <option value="#แชมเปี้ยนชิพ">#แชมเปี้ยนชิพ</option>
+                    <option value="#คาราบาวคัพ">#คาราบาวคัพ</option>
+                    <option value="#โกปา เดล เรย์">#โกปา เดล เรย์</option>
+                    <option value="#ฟุตบอลโลก">#ฟุตบอลโลก</option>
+                    <option value="#โคปปา อิตาเลีย">#โคปปา อิตาเลีย</option>
+                    <option value="#เดเอฟเบ โพคาล">#เดเอฟเบ โพคาล</option>
+                    <option value="#เอเรดิวิซี">#เอเรดิวิซี</option>
+                    <option value="#ยูฟ่า แชมเปี้ยนส์ ลีก">#ยูฟ่า แชมเปี้ยนส์ ลีก</option>
+                    <option value="#สกอตติช พรีเมียร์ชิพ">#สกอตติช พรีเมียร์ชิพ</option>
+                    <option value="#ซาอุดี โปรลีก">#ซาอุดี โปรลีก</option>
+                    <option value="#ซูเปอร์ลีก ตุรกี">#ซูเปอร์ลีก ตุรกี</option>
+                    <option value="#ยูโรเปียน ซูเปอร์ ลีก">#ยูโรเปียน ซูเปอร์ ลีก</option>
+                    <option value="#ยูฟ่าเนชั่นส์ลีก">#ยูฟ่าเนชั่นส์ลีก</option>
+                    <option value="#ยูโรปาลีก">#ยูโรปาลีก</option>
+                    <option value="#ยูฟ่า คอนเฟอเรนซ์ ลีก">#ยูฟ่า คอนเฟอเรนซ์ ลีก</option>
+                    <option value="#บราซิล ซีรี่เอ">#บราซิล ซีรี่เอ</option>
+                    <option value="#เมเจอร์ลีก ซอคเกอร์">#เมเจอร์ลีก ซอคเกอร์</option>
+                    <option value="#ลีกอื่น ๆ">#ลีกอื่น ๆ</option>
+                    <option value="#ข่าวอื่น ๆ">#ข่าวอื่น ๆ</option>
+                </select>
+            </div>
 
-            <button type="submit" id="submitBtn">ส่งข้อมูลเข้าระบบ 🚀</button>
-        </form>
+            <button onclick="sendData()" id="btn-submit" class="mt-4 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 rounded-xl transition duration-300 shadow-lg shadow-blue-500/30 text-lg flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                ส่งข้อมูลเข้าระบบ
+            </button>
 
-        <div id="statusMessage" class="status-msg"></div>
+            <div id="error-msg" class="text-center text-red-500 font-medium text-sm hidden bg-red-50 p-3 rounded-lg border border-red-100">
+                ❌ เชื่อมต่อไม่ได้: ตรวจสอบอุโมงค์ Cloudflare ในคอมพิวเตอร์
+            </div>
+        </div>
     </div>
 
     <script>
-        // ใช้ URL แบบมี -test ไว้รับข้อมูลตอนต่อโครงสร้าง n8n
-        const webhookUrl = 'https://n8n.home26.online/webhook/news-form';
+        // ฟังก์ชันเปลี่ยนข้อความเมื่อเลือกรูปภาพเสร็จ
+        function updateFileName(input) {
+            const fileNameDisplay = document.getElementById('file-name');
+            if (input.files && input.files.length > 0) {
+                fileNameDisplay.textContent = '✅ เลือกไฟล์: ' + input.files[0].name;
+                fileNameDisplay.classList.replace('text-slate-600', 'text-green-600');
+            } else {
+                fileNameDisplay.textContent = 'คลิกเพื่อเลือกรูปภาพจากเครื่อง';
+                fileNameDisplay.classList.replace('text-green-600', 'text-slate-600');
+            }
+        }
 
-        document.getElementById('newsForm').addEventListener('submit', async function(e) {
-            e.preventDefault(); 
-            const btn = document.getElementById('submitBtn');
-            const status = document.getElementById('statusMessage');
+        async function sendData() {
+            const btn = document.getElementById('btn-submit');
+            const errorMsg = document.getElementById('error-msg');
+            const n1 = document.getElementById('n1').value;
+
+            // เช็คว่ากรอกพาดหัวหรือยัง
+            if (!n1.trim()) {
+                alert('กรุณากรอกพาดหัวข่าวบรรทัดที่ 1 ด้วยครับ!');
+                document.getElementById('n1').focus();
+                return;
+            }
             
-            btn.disabled = true;
-            btn.innerText = 'กำลังส่งข้อมูล... ⏳';
-            status.innerText = '';
-            status.className = 'status-msg';
-
             const formData = new FormData();
-            formData.append('image', document.getElementById('imageFile').files[0]);
+            
+            const fileInput = document.getElementById('imageFile');
+            if (fileInput.files.length > 0) {
+                formData.append('data', fileInput.files[0]); 
+            }
+            
             formData.append('imgType', document.getElementById('imgType').value);
             formData.append('alignMode', document.getElementById('alignMode').value);
             formData.append('zoomText', document.getElementById('zoomText').value);
             formData.append('yOffText', document.getElementById('yOffText').value);
-            formData.append('n1', document.getElementById('n1').value);
+            formData.append('n1', n1);
             formData.append('n2', document.getElementById('n2').value);
             formData.append('lg', document.getElementById('lg').value);
 
+            // เปลี่ยนหน้าตาปุ่มตอนกำลังโหลด
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> กำลังส่งข้อมูล...`;
+            errorMsg.classList.add('hidden');
+
             try {
-                const response = await fetch(webhookUrl, { method: 'POST', body: formData });
+                // วางลิงก์ Production ของคุณเตอร์ (ตรงนี้ใช้ของเดิมได้เลยครับ)
+                const response = await fetch('https://n8n.home26.online/webhook/news-form', {
+                    method: 'POST',
+                    body: formData 
+                });
+
                 if (response.ok) {
-                    status.innerText = '✅ ส่งข้อมูลสำเร็จ! กำลังเข้า n8n ครับ';
-                    status.classList.add('success');
-                    document.getElementById('newsForm').reset();
-                    document.getElementById('zoomText').value = "100";
-                    document.getElementById('yOffText').value = "0";
+                    btn.innerHTML = "✅ ส่งข้อมูลสำเร็จเรียบร้อย!";
+                    btn.classList.replace('from-blue-600', 'from-emerald-500');
+                    btn.classList.replace('to-indigo-600', 'to-emerald-600');
+                    setTimeout(() => location.reload(), 2000);
                 } else {
-                    status.innerText = '❌ ส่งไม่สำเร็จ: n8n อาจจะยังไม่ได้กด Listen for test event';
-                    status.classList.add('error');
+                    throw new Error("Server Error");
                 }
-            } catch (error) {
-                status.innerText = '❌ เชื่อมต่อไม่ได้: ตรวจสอบอุโมงค์ Cloudflare ครับ';
-                status.classList.add('error');
-            } finally {
+            } catch (err) {
+                errorMsg.classList.remove('hidden');
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg> ส่งข้อมูลเข้าระบบ`;
                 btn.disabled = false;
-                btn.innerText = 'ส่งข้อมูลเข้าระบบ 🚀';
             }
-        });
+        }
     </script>
 </body>
 </html>
-
-
