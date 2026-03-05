@@ -6,85 +6,18 @@
     <title>ระบบส่งภาพข่าวอัตโนมัติ 🚀</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 500px;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #1a1a1a;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: 600;
-            color: #4a4a4a;
-            font-size: 14px;
-        }
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: 'Kanit', sans-serif;
-            font-size: 15px;
-        }
-        input[type="file"] {
-            padding: 9px;
-            background-color: #f9f9f9;
-        }
-        .row {
-            display: flex;
-            gap: 15px;
-        }
-        .row > div {
-            flex: 1;
-        }
-        button {
-            width: 100%;
-            background-color: #0066ff;
-            color: white;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 25px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-family: 'Kanit', sans-serif;
-        }
-        button:hover {
-            background-color: #0052cc;
-        }
-        button:disabled {
-            background-color: #a0c4ff;
-            cursor: not-allowed;
-        }
-        .status-msg {
-            margin-top: 15px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 15px;
-        }
-        .success { color: #28a745; }
-        .error { color: #dc3545; }
+        body { font-family: 'Kanit', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background-color: #ffffff; width: 100%; max-width: 500px; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1a1a1a; margin-top: 0; margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: 600; color: #4a4a4a; font-size: 14px; }
+        input, select { width: 100%; padding: 12px; margin-top: 6px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: 'Kanit', sans-serif; font-size: 15px; }
+        input[type="file"] { padding: 9px; background-color: #f9f9f9; }
+        .row { display: flex; gap: 15px; } .row > div { flex: 1; }
+        button { width: 100%; background-color: #0066ff; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; margin-top: 25px; cursor: pointer; transition: background-color 0.3s; font-family: 'Kanit', sans-serif; }
+        button:hover { background-color: #0052cc; }
+        button:disabled { background-color: #a0c4ff; cursor: not-allowed; }
+        .status-msg { margin-top: 15px; text-align: center; font-weight: 600; font-size: 15px; }
+        .success { color: #28a745; } .error { color: #dc3545; }
     </style>
 </head>
 <body>
@@ -93,88 +26,64 @@
         <h2>ส่งข้อมูลทำภาพข่าว 📸</h2>
         
         <form id="newsForm">
-            <label>1. เลือกรูปภาพจากมือถือ</label>
+            <label>1. เลือกรูปภาพจากมือถือ (เพิ่มภาพข่าว)</label>
             <input type="file" id="imageFile" accept="image/*" required>
 
             <div class="row">
                 <div>
                     <label>2. รูปแบบภาพ</label>
                     <select id="imgType">
-                        <option value="0">แนวนอน (Landscape)</option>
-                        <option value="1">แนวตั้ง (Portrait)</option>
+                        <option value="แนวนอน">แนวนอน (Landscape)</option>
+                        <option value="แนวตั้ง">แนวตั้ง (Portrait)</option>
                     </select>
                 </div>
                 <div>
-                    <label>3. การจัดตำแหน่ง (แนวตั้ง)</label>
+                    <label>3. ตำแหน่งภาพ</label>
                     <select id="alignMode">
-                        <option value="0">ชิดบน (Top)</option>
-                        <option value="1">ตรงกลาง (Center)</option>
+                        <option value="ชิดบน">ชิดบน (Top)</option>
+                        <option value="ตรงกลาง">ตรงกลาง (Center)</option>
                     </select>
                 </div>
             </div>
 
             <div class="row">
                 <div>
-                    <label>4. ซูมภาพ (%)</label>
+                    <label>4. ค่าการซูม (Zoom %)</label>
                     <input type="number" id="zoomText" value="100" required>
                 </div>
                 <div>
-                    <label>5. เลื่อนแกน Y (บวก/ลบ %)</label>
+                    <label>5. ขยับแกน Y (Y_Offset)</label>
                     <input type="number" id="yOffText" value="0" required>
                 </div>
             </div>
 
-            <label>6. ข้อความบรรทัดที่ 1</label>
+            <label>6. หัวข้อข่าวบรรทัดที่ 1</label>
             <input type="text" id="n1" placeholder="พิมพ์พาดหัวข่าวที่นี่..." required>
 
-            <label>7. ข้อความบรรทัดที่ 2 (เว้นว่างได้)</label>
+            <label>7. หัวข้อข่าวบรรทัดที่ 2 (เว้นว่างได้)</label>
             <input type="text" id="n2" placeholder="พิมพ์ข้อความรอง (ถ้ามี)...">
 
-            <label>8. เลือกหมวดหมู่ / ลีก</label>
+            <label>8. เลือกลีก (League)</label>
             <select id="lg">
-                <option value="พรีเมียร์ลีก">#พรีเมียร์ลีก</option>
-                <option value="เซเรีย อา">#เซเรีย อา</option>
-                <option value="บุนเดสลีกา">#บุนเดสลีกา</option>
-                <option value="ลาลีกา">#ลาลีกา</option>
-                <option value="ปรีไมราลีกา">#ปรีไมราลีกา</option>
-                <option value="ลีกเอิง">#ลีกเอิง</option>
-                <option value="เอฟเอ คัพ">#เอฟเอ คัพ</option>
-                <option value="เฟร้นช์ คัพ">#เฟร้นช์ คัพ</option>
-                <option value="ทีมชาติ">#ทีมชาติ</option>
-                <option value="แชมเปี้ยนชิพ">#แชมเปี้ยนชิพ</option>
-                <option value="คาราบาวคัพ">#คาราบาวคัพ</option>
-                <option value="โกปา เดล เรย์">#โกปา เดล เรย์</option>
-                <option value="ฟุตบอลโลก">#ฟุตบอลโลก</option>
-                <option value="โคปปา อิตาเลีย">#โคปปา อิตาเลีย</option>
-                <option value="เดเอฟเบ โพคาล">#เดเอฟเบ โพคาล</option>
-                <option value="เอเรดิวิซี">#เอเรดิวิซี</option>
-                <option value="ยูฟ่า แชมเปี้ยนส์ ลีก">#ยูฟ่า แชมเปี้ยนส์ ลีก</option>
-                <option value="สกอตติช พรีเมียร์ชิพ">#สกอตติช พรีเมียร์ชิพ</option>
-                <option value="ซาอุดี โปรลีก">#ซาอุดี โปรลีก</option>
-                <option value="ซูเปอร์ลีก ตุรกี">#ซูเปอร์ลีก ตุรกี</option>
-                <option value="ยูโรเปียน ซูเปอร์ ลีก">#ยูโรเปียน ซูเปอร์ ลีก</option>
-                <option value="ยูฟ่าเนชั่นส์ลีก">#ยูฟ่าเนชั่นส์ลีก</option>
-                <option value="ยูโรปาลีก">#ยูโรปาลีก</option>
-                <option value="ยูฟ่า คอนเฟอเรนซ์ ลีก">#ยูฟ่า คอนเฟอเรนซ์ ลีก</option>
-                <option value="บราซิล ซีรี่เอ">#บราซิล ซีรี่เอ</option>
-                <option value="เมเจอร์ลีก ซอคเกอร์">#เมเจอร์ลีก ซอคเกอร์</option>
-                <option value="ลีกอื่น ๆ">#ลีกอื่น ๆ</option>
-                <option value="ข่าวอื่น ๆ">#ข่าวอื่น ๆ</option>
+                <option value="พรีเมียร์ลีก">พรีเมียร์ลีก</option>
+                <option value="เซเรีย อา">เซเรีย อา</option>
+                <option value="บุนเดสลีกา">บุนเดสลีกา</option>
+                <option value="ลาลีกา">ลาลีกา</option>
+                <option value="ข่าวทั่วไป">ข่าวทั่วไป</option>
             </select>
 
-            <button type="submit" id="submitBtn">ส่งข้อมูลเข้า n8n 🚀</button>
+            <button type="submit" id="submitBtn">ส่งข้อมูลเข้าระบบ 🚀</button>
         </form>
 
         <div id="statusMessage" class="status-msg"></div>
     </div>
 
     <script>
-        // ⚠️ สังเกตตรงนี้ครับ จีเปลี่ยนเป็น /webhook-test/ ให้แล้วครับ
+        // ใช้ URL แบบมี -test ไว้รับข้อมูลตอนต่อโครงสร้าง n8n
         const webhookUrl = 'https://n8n.home26.online/webhook-test/news-form';
 
         document.getElementById('newsForm').addEventListener('submit', async function(e) {
             e.preventDefault(); 
-            
             const btn = document.getElementById('submitBtn');
             const status = document.getElementById('statusMessage');
             
@@ -194,33 +103,25 @@
             formData.append('lg', document.getElementById('lg').value);
 
             try {
-                const response = await fetch(webhookUrl, {
-                    method: 'POST',
-                    body: formData
-                });
-
+                const response = await fetch(webhookUrl, { method: 'POST', body: formData });
                 if (response.ok) {
-                    status.innerText = '✅ ส่งข้อมูลสำเร็จ! n8n กำลังทำงานครับ';
+                    status.innerText = '✅ ส่งข้อมูลสำเร็จ! กำลังเข้า n8n ครับ';
                     status.classList.add('success');
                     document.getElementById('newsForm').reset();
                     document.getElementById('zoomText').value = "100";
                     document.getElementById('yOffText').value = "0";
                 } else {
-                    status.innerText = '❌ ส่งไม่สำเร็จ: เช็ค n8n ว่าเปิดรอรับข้อมูลหรือยังครับ';
+                    status.innerText = '❌ ส่งไม่สำเร็จ: n8n อาจจะยังไม่ได้กด Listen for test event';
                     status.classList.add('error');
                 }
             } catch (error) {
-                status.innerText = '❌ เชื่อมต่อไม่ได้: อุโมงค์อาจจะปิด หรือติด CORS ครับ';
+                status.innerText = '❌ เชื่อมต่อไม่ได้: ตรวจสอบอุโมงค์ Cloudflare ครับ';
                 status.classList.add('error');
-                console.error('Error:', error);
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'ส่งข้อมูลเข้า n8n 🚀';
+                btn.innerText = 'ส่งข้อมูลเข้าระบบ 🚀';
             }
         });
     </script>
-
 </body>
 </html>
-
-
